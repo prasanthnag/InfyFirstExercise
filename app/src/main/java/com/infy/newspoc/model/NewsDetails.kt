@@ -1,9 +1,9 @@
-package com.infy.infypoc.model
+package com.infy.newspoc.model
 
 import android.os.Parcel
 import android.os.Parcelable
 
-data class CountryDetails(
+data class NewsDetails(
     var title: String? = "",
     var description: String? = "",
     var imageRef: String? = ""
@@ -12,8 +12,7 @@ data class CountryDetails(
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
@@ -25,12 +24,12 @@ data class CountryDetails(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<CountryDetails> {
-        override fun createFromParcel(parcel: Parcel): CountryDetails {
-            return CountryDetails(parcel)
+    companion object CREATOR : Parcelable.Creator<NewsDetails> {
+        override fun createFromParcel(parcel: Parcel): NewsDetails {
+            return NewsDetails(parcel)
         }
 
-        override fun newArray(size: Int): Array<CountryDetails?> {
+        override fun newArray(size: Int): Array<NewsDetails?> {
             return arrayOfNulls(size)
         }
     }

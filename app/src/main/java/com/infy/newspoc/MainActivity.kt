@@ -6,8 +6,9 @@ import android.util.Log
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.infy.infypoc.adapter.CountryAdapter
-import com.infy.infypoc.model.CountryDetails
+import com.infy.newspoc.adapter.NewsAdapter
+import com.infy.newspoc.model.NewsDetails
+import com.infy.newspoc.utils.Constants
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -16,26 +17,26 @@ import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private var countryDetailsList: ArrayList<CountryDetails> = arrayListOf()
+    private var newsDetailsList: ArrayList<NewsDetails> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         if (savedInstanceState != null)
-            countryDetailsList = savedInstanceState.getParcelableArrayList<CountryDetails>("COUNTRY_DETAILS") as ArrayList<CountryDetails>
+            newsDetailsList = savedInstanceState.getParcelableArrayList<NewsDetails>(Constants.KEY_NEWS_DETAILS) as ArrayList<NewsDetails>
         recyclerView = findViewById(R.id.rcvDummy)
         recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         loadJSONItems()
-        recyclerView.adapter = CountryAdapter(countryDetailsList, this)
+        recyclerView.adapter = NewsAdapter(newsDetailsList, this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList("COUNTRY_DETAILS", countryDetailsList)
+        outState.putParcelableArrayList(Constants.KEY_NEWS_DETAILS, newsDetailsList)
     }
 
     private fun loadJSONItems() {
-        if (countryDetailsList.isEmpty()) {
+        if (newsDetailsList.isEmpty()) {
             try {
                 val jsonObject = JSONObject(readJSON())
                 val jsonArray = jsonObject.getJSONArray("rows")
@@ -46,8 +47,8 @@ class MainActivity : AppCompatActivity() {
                             if (!itemObj.isNull("description")) itemObj.getString("description") else null
                     val imageRef =
                             if (!itemObj.isNull("imageHref")) itemObj.getString("imageHref") else null
-                    val countryDetails = CountryDetails(title, description, imageRef)
-                    countryDetailsList.add(countryDetails)
+                    val countryDetails = NewsDetails(title, description, imageRef)
+                    newsDetailsList.add(countryDetails)
                 }
             } catch (e: JSONException) {
                 Log.d("", "loadJSONItems: ", e)
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         var jsonString: String? = null
         try {
             val inputStream: InputStream?
-            inputStream = resources.openRawResource(R.raw.countrydetails)
+            inputStream = resources.openRawResource(R.raw.newsdetails)
             val size = inputStream.available()
             val buffer = ByteArray(size)
             inputStream.read(buffer)
