@@ -1,8 +1,7 @@
 package com.infy.newspoc
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +22,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         if (savedInstanceState != null)
-            newsDetailsList = savedInstanceState.getParcelableArrayList<NewsDetails>(Constants.KEY_NEWS_DETAILS) as ArrayList<NewsDetails>
+            newsDetailsList =
+                savedInstanceState.getParcelableArrayList<NewsDetails>(Constants.KEY_NEWS_DETAILS) as ArrayList<NewsDetails>
         recyclerView = findViewById(R.id.rcvDummy)
         recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         loadJSONItems()
@@ -39,19 +39,22 @@ class MainActivity : AppCompatActivity() {
         if (newsDetailsList.isEmpty()) {
             try {
                 val jsonObject = JSONObject(readJSON())
+                var newsDetails: NewsDetails
                 val jsonArray = jsonObject.getJSONArray("rows")
                 for (i in 0 until jsonArray.length()) {
                     val itemObj = jsonArray.getJSONObject(i)
                     val title = if (!itemObj.isNull("title")) itemObj.getString("title") else null
                     val description =
-                            if (!itemObj.isNull("description")) itemObj.getString("description") else null
+                        if (!itemObj.isNull("description")) itemObj.getString("description") else null
                     val imageRef =
-                            if (!itemObj.isNull("imageHref")) itemObj.getString("imageHref") else null
-                    val countryDetails = NewsDetails(title, description, imageRef)
-                    newsDetailsList.add(countryDetails)
+                        if (!itemObj.isNull("imageHref")) itemObj.getString("imageHref") else null
+                    if (title != null || description != null || imageRef != null) {
+                        newsDetails = NewsDetails(title, description, imageRef)
+                        newsDetailsList.add(newsDetails)
+                    }
                 }
             } catch (e: JSONException) {
-                Log.d("", "loadJSONItems: ", e)
+                e.printStackTrace()
             }
         }
 
